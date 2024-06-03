@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victory Screen</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: black; /* Set the background color to black */
+            color: white; /* Set the text color to white */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #victory-message {
+            text-align: center;
+        }
+        #victory-message h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        #victory-message img {
+            margin-bottom: 20px; /* Add margin below the GIF */
+            max-width: 100%; /* Ensure the image fits within the container */
+        }
+        .back-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block; /* Make the button a block element */
+            margin-top: 20px;
+            width: 200px; /* Set a fixed width for better alignment */
+            margin-left: auto; /* Center the button horizontally */
+            margin-right: auto; /* Center the button horizontally */
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+        #credits {
+            display: none;
+        }
+        #credits img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            max-width: 80%; /* Shrink the photo */
+        }
+    </style>
+</head>
+<body>
+    <div id="victory-message">
+        <h1>Congratulations!</h1>
+        <img src="Vitory.gif" alt="Victory GIF">
+        <button id="credits-button" class="back-button">Credits</button>
+        <a href="index.html" id="back-home-button" class="back-button" style="display: none;">Back to Homepage</a>
+        <div id="credits">
+            <p></p>
+            <p></p>
+            <!-- Add your photo here -->
+            <img src="Credits.png" alt="Credits Image">
+        </div>
+        <a href="index.html" id="home-button" class="back-button" style="display: none;">Homepage</a>
+    </div>
+
+    <script>
+        // Credits button click event
+        document.getElementById('credits-button').addEventListener('click', function() {
+            // Show the credits
+            document.getElementById('credits').style.display = 'block';
+            // Hide the victory message and button
+            document.getElementById('victory-message').getElementsByTagName('img')[0].style.display = 'none';
+            this.style.display = 'none';
+            // Show the back button
+            document.getElementById('back-home-button').style.display = 'block';
+            // Show the homepage button
+            document.getElementById('home-button').style.display = 'block';
+        });
+
+        // Back to Homepage button click event
+        document.getElementById('back-home-button').addEventListener('click', function() {
+            // Redirect to the homepage
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

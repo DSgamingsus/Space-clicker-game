@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Clicker Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Osake&display=swap">
+    <style>
+	@font-face {
+            font-family: 'Osake';
+            src: url('Osake.otf') format('OpenType'); /* Adjust the path if needed */
+        }
+        body {
+            text-align: center;
+            font-family: 'Osake';
+            position: relative;
+            background-color: black; /* Set the background color to black */
+            color: #ADD8E6; /* Set the text color to white */
+        }
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #score {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #gem-counter {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+        }
+        #store-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        #shop-box {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: black;
+            padding: 20px;
+            border: 2px solid black;
+            z-index: 999;
+            width: 200px;
+        }
+        #close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+        .shop-item {
+            margin-bottom: 10px;
+        }
+        .shop-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .shop-button:hover {
+            background-color: #45a049;
+        }
+        #cost-display {
+            margin-top: 10px;
+        }
+
+        /* New styles for challenge and quest modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: black;
+            padding: 20px;
+            border: 2px solid black;
+            z-index: 999;
+            width: 300px;
+        }
+        .modal h2 {
+            margin-top: 0;
+        }
+        .modal-item {
+            margin-bottom: 10px;
+        }
+        .close-modal {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+        .modal-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .modal-button:hover {
+            background-color: #0056b3;
+        }
+        #challenge-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 999;
+        }
+        #challenge-button:hover {
+            background-color: #0056b3;
+        }
+        #quest-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 999;
+        }
+        #quest-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Styles for boss battle */
+        #boss-container {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        #boss {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            position: absolute;
+
+         #victory-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+            z-index: 1000;
+        }
+        #victory-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Space Clicker Game</h1>
+        <p>Click on the button to get gems!</p>
+        <div id="score">Score: <span id="score-value">0</span></div>
+        <button id="space-ship-button">
+            <img src="space.png" alt="Space Ship">
+        </button>
+    </div>
+    <div id="gem-counter"><i class="fas fa-gem"></i> <span id="gem-count">0</span></div>
+    <i id="store-icon" class="fas fa-store"></i>
+    <div id="shop-box">
+        <h2>Shop</h2>
+        <div class="shop-item">Purchase items with <i class="fas fa-gem"></i></div>
+        <button class="shop-button" id="upgrade-button">Purchase better clicker for <span id="upgrade-cost">10</span> <i class="fas fa-gem"></i></button>
+        <button class="shop-button" id="score-upgrade-button">Purchase better score for <span id="score-upgrade-cost">100</span> <i class="fas fa-gem"></i></button>
+<button class="shop-button" id="gun-purchase-button">Purchase Gun for 100,000,000 Gems</button>
+<button class="shop-button" id="upgrade-gun-button" style="display: none;">Upgrade Gun for 10,000 Gems</button>
+
+
+        <button class="shop-button" id="gem-purchase-button">Purchase a gem for $0.01. Type in the amount you want-</button>
+        <div id="cost-display"></div>
+        <button id="pay-button" class="shop-button">Pay</button>
+        <button id="close-button" class="shop-button"><i class="fas fa-times"></i> Close</button>
+    </div>
+
+    <!-- Miner Section -->
+    <div id="miner-section">
+        <h2>Miner</h2>
+        <button class="shop-button" id="miner-button">Purchase Miner for <span id="miner-cost">25000</span> <i class="fas fa-gem"></i></button>
+        <button class="shop-button" id="upgrade-miner-button">Upgrade Miner for <span id="upgrade-miner-cost">10000</span> <i class="fas fa-gem"></i></button>
+    </div>
+
+    <!-- Factory Section -->
+    <div id="factory-section">
+        <h2>Factory</h2>
+        <button class="shop-button" id="factory-button">Purchase Factory for <span id="factory-cost">100000</span> <i class="fas fa-gem"></i></button>
+    </div>
+
+    <!-- Challenge button -->
+    <button id="challenge-button">
+        <i class="fas fa-trophy"></i> Challenges
+    </button>
+
+    <!-- Challenge modal -->
+    <div id="challenge-modal" class="modal">
+        <span class="close-modal"><i class="fas fa-times"></i></span>
+        <h2>Challenges</h2>
+        <div class="modal-item">Coming</div>
+        <div class="modal-item">Soon</div>
+        <div class="modal-item">...</div>
+        <button class="modal-button">Accept</button>
+    </div>
+
+    <!-- Quest button -->
+    <button id="quest-button">
+        <i class="fas fa-tasks"></i> Quests
+    </button>
+
+    <!-- Quest modal -->
+    <div id="quest-modal" class="modal">
+        <span class="close-modal"><i class="fas fa-times"></i></span>
+        <h2>Quests</h2>
+        <div class="modal-item">Quest 1. Reach 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000 score</div>
+        <div class="modal-item">Quest 2. Get 200000000000000000000000000000000000000 gems</div>
+        <div class="modal-item">Quest 3. </div>
+        <button class="modal-button">Accept</button>
+    </div>
+
+    <!-- Boss battle container -->
+    <div id="boss-container">
+        <div id="boss"></div>
+        <h2>Boss Battle!</h2>
+        <p>Click faster than the boss to win!</p>
+    </div>
+
+    <script>
+        let score = 0;
+        let gems = 0;
+        let clickMultiplier = 1;
+        let upgradeCost = 10;
+        let gemMultiplier = 1;
+        let gemsToPurchase = 0;
+        let shopUnlocked = false; // Flag variable to track if the shop has been unlocked
+        let minerUpgrades = 0; // Number of miner upgrades purchased
+        let bossClickCount = 0;
+        let playerClickCount = 0;
+
+        // Function to update the score on the page
+        function updateScore() {
+            document.getElementById('score-value').textContent = score;
+        }
+
+        // Function to update the gem count on the page
+        function updateGems() {
+            document.getElementById('gem-count').textContent = gems;
+        }
+
+        // Function to handle button click
+        function handleButtonClick() {
+            score += clickMultiplier;
+            gems += gemMultiplier;
+            updateScore();
+            updateGems();
+            checkBossBattle();
+        }
+
+        // Check if the player should start a boss battle
+        function checkBossBattle() {
+            if (score > 0 && score % 1000 === 0) {
+                startBossBattle();
+            }
+        }
+
+        // Start the boss battle
+        function startBossBattle() {
+            const bossContainer = document.getElementById('boss-container');
+            const boss = document.getElementById('boss');
+            let bossClickSpeed = 2000; // Initial boss click speed (2 seconds)
+            let battleTime = 10; // Boss battle duration in seconds
+            let minClickSpeed = 1000 //time in milliseconds
+            bossClickCount = 0;
+            playerClickCount = 0;
+
+            bossContainer.style.display = 'flex';
+
+            const bossInterval = setInterval(() => {
+                bossClickCount++;
+                if (bossClickSpeed > 500) {
+                    bossClickSpeed -= 1; // Boss clicks faster over time
+                }
+            }, bossClickSpeed);
+
+            const battleTimeout = setTimeout(() => {
+                clearInterval(bossInterval);
+                bossContainer.style.display = 'none';
+                if (playerClickCount <= bossClickCount) {
+                    alert("You lost the boss battle! Restarting...");
+                    location.reload(); // Restart the game if the player loses
+                } else {
+                    alert("You won the boss battle!");
+                }
+            }, battleTime * 1000);
+        }
+
+        // Space key click handler
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space') {
+                handleButtonClick();
+            }
+        });
+
+        // Button click event
+        document.getElementById('space-ship-button').addEventListener('click', handleButtonClick);
+
+        // Store icon click event
+        document.getElementById('store-icon').addEventListener('click', function() {
+            if (shopUnlocked) {
+                document.getElementById('shop-box').style.display = 'block';
+            } else {
+                alert("Reach 50 gems to unlock the shop!");
+            }
+        });
+
+        // Close button click event
+        document.getElementById('close-button').addEventListener('click', function() {
+            document.getElementById('shop-box').style.display = 'none';
+        });
+
+        // Upgrade button click event
+        document.getElementById('upgrade-button').addEventListener('click', function() {
+            if (gems >= upgradeCost) {
+                gems -= upgradeCost;
+                clickMultiplier++;
+                upgradeCost *= 2;
+                document.getElementById('upgrade-cost').textContent = upgradeCost;
+                updateGems();
+            } else {
+                alert("Not enough gems!");
+            }
+        });
+
+        // Gem purchase button click event
+        document.getElementById('gem-purchase-button').addEventListener('click', function() {
+            let amount = prompt("Enter the amount of gems you want to purchase:");
+            if (amount && !isNaN(amount) && amount > 0) {
+                gemsToPurchase = parseInt(amount);
+                document.getElementById('cost-display').textContent = `Cost: $${(gemsToPurchase * 0.01).toFixed(2)}`;
+            } else {
+                alert("Invalid amount!");
+            }
+        });
+
+        // Pay button click event
+        document.getElementById('pay-button').addEventListener('click', function() {
+            if (gemsToPurchase > 0) {
+                gems += gemsToPurchase;
+                updateGems();
+                gemsToPurchase = 0;
+                document.getElementById('cost-display').textContent = '';
+            } else {
+                alert("Enter a valid amount of gems to purchase!");
+            }
+        });
+            // Event listener to detect Alt + Shift key combination
+document.addEventListener('keydown', function(event) {
+    if (event.altKey && event.shiftKey) {
+        // Give the player infinite gems
+        gems = Infinity;
+        updateGems(); // Update the displayed gem count
+        alert("check your gems... your in developer mode");
+    }
+});
+// Event listener to detect Ctrl + Shift + Z key combination
+document.addEventListener('keydown', function(event) {
+    if (event.ctrlKey && event.shiftKey && event.key === 'Z') {
+        // Ask the player how many gems they want
+        const amount = prompt("How many gems do you want?");
+        if (amount !== null) {
+            // Convert the input to a number
+            const gemsToAdd = parseInt(amount);
+            if (!isNaN(gemsToAdd) && gemsToAdd > 0) {
+                // Add the specified number of gems
+                gems += gemsToAdd;
+                updateGems(); // Update the displayed gem count
+                alert("You've received " + gemsToAdd + " gems!");
+            } else {
+                alert("Invalid input. Please enter a valid number of gems.");
+            }
+        }
+    }
+});
+// Function to check if the victory condition is met
+function checkWinCondition() {
+    if (score >= 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000 && gems >= 200000000000000000000000000000000000000) {
+        // Redirect to victory.html
+        window.location.href = "victory.html";
+    }
+}
+// Function to update the score on the page
+function updateScore() {
+    document.getElementById('score-value').textContent = score;
+    checkWinCondition(); // Check for win condition after score update
+}
+// Define variables for shooting cooldown and gun upgrade
+let canShoot = true;
+let gunScoreMultiplier = 1;
+let gunCooldownMultiplier = 1;
+let gunUpgradeCost = 10000;
+
+// Function to handle shooting the button
+function handleShoot() {
+    if (canShoot) {
+        score += 100000 * gunScoreMultiplier; // Increase score with gun multiplier
+        updateScore(); // Update the displayed score
+        canShoot = false; // Set the cooldown
+        setTimeout(() => {
+            canShoot = true; // Reset the cooldown after specified time
+        }, 60000 * gunCooldownMultiplier); // Cooldown multiplied by gun multiplier
+    } else {
+        alert("Gun is on cooldown. Please wait.");
+    }
+}
+
+// Event listener to detect "B" key press for shooting
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'b' || event.key === 'B') {
+        handleShoot();
+    }
+});
+
+// Gun purchase button click event
+document.getElementById('gun-purchase-button').addEventListener('click', function() {
+    if (gems >= 100000000) {
+        gems -= 100000000; // Deduct gems for purchasing the gun
+        updateGems(); // Update the displayed gem count
+        alert("Gun purchased!");
+        document.getElementById('upgrade-gun-button').style.display = 'inline-block'; // Show the upgrade button
+    } else {
+        alert("Not enough gems to purchase the gun!");
+    }
+});
+
+// Upgrade gun button click event
+document.getElementById('upgrade-gun-button').addEventListener('click', function() {
+    if (gems >= gunUpgradeCost) {
+        gems -= gunUpgradeCost; // Deduct gems for purchasing the upgrade
+        updateGems(); // Update the displayed gem count
+        gunScoreMultiplier *= 10; // Increase score multiplier
+        gunCooldownMultiplier *= 2; // Double cooldown multiplier
+        gunUpgradeCost += 1000; // Increase upgrade cost
+        document.getElementById('upgrade-gun-button').textContent = `Upgrade Gun for ${gunUpgradeCost} Gems`; // Update button text
+        alert("Gun upgraded!");
+    } else {
+        alert("Not enough gems to upgrade the gun!");
+    }
+});
+// Function to check for gem robbery
+function checkGemRobbery() {
+    if (gems >= 10000000000) {
+        // Reduce gems by 500
+        gems -= 500;
+        updateGems(); // Update the displayed gem count
+        alert("You got robbed! Your gems have been reduced by 500.");
+    }
+}
+
+// Set up interval to check for gem robbery every minute
+setInterval(checkGemRobbery, 60000); // 60000 milliseconds = 1 minute
+
+        // Miner purchase button click event
+        document.getElementById('miner-button').addEventListener('click', function() {
+            if (gems >= 25000) {
+                gems -= 25000;
+                updateGems();
+                alert("Miner purchased!");
+                setInterval(() => {
+                    gems += 10; // Increase gems every second
+                    updateGems();
+                }, 1000);
+            } else {
+                alert("Not enough gems!");
+            }
+        });
+
+        // Upgrade miner button click event
+        document.getElementById('upgrade-miner-button').addEventListener('click', function() {
+            if (gems >= 10000) {
+                gems -= 10000;
+                minerUpgrades++;
+                updateGems();
+                alert("Miner upgraded!");
+                setInterval(() => {
+                    gems += 20 * minerUpgrades; // Increase gems every second based on upgrades
+                    updateGems();
+                }, 1000);
+            } else {
+                alert("Not enough gems!");
+            }
+        });
+
+        // Factory purchase button click event
+        document.getElementById('factory-button').addEventListener('click', function() {
+            if (gems >= 100000) {
+                gems -= 100000;
+                updateGems();
+                alert("Factory purchased!");
+                setInterval(() => {
+                    gems += 50; // Increase gems every second
+                    updateGems();
+                }, 1000);
+            } else {
+                alert("Not enough gems!");
+            }
+        });
+
+        // Unlock the shop when the player reaches 50 gems
+        setInterval(() => {
+            if (gems >= 50 && !shopUnlocked) {
+                shopUnlocked = true;
+                alert("You have unlocked the shop!");
+            }
+        }, 1000);
+
+        // Challenge button click event
+        document.getElementById('challenge-button').addEventListener('click', function() {
+            document.getElementById('challenge-modal').style.display = 'block';
+        });
+
+        // Close challenge modal
+        document.querySelector('#challenge-modal .close-modal').addEventListener('click', function() {
+            document.getElementById('challenge-modal').style.display = 'none';
+        });
+
+        // Quest button click event
+        document.getElementById('quest-button').addEventListener('click', function() {
+            document.getElementById('quest-modal').style.display = 'block';
+        });
+
+        // Close quest modal
+        document.querySelector('#quest-modal .close-modal').addEventListener('click', function() {
+            document.getElementById('quest-modal').style.display = 'none';
+        });
+
+// Event listener to detect Shift + Enter key combination
+document.addEventListener('keydown', function(event) {
+    if (event.shiftKey && event.key === 'Enter') {
+        // Give the player infinite score
+        score = Infinity;
+        updateScore(); // Update the displayed score
+        alert("Infinite score activated!");
+    }
+});
+
+// Event listener to detect Shift + T key combination
+document.addEventListener('keydown', function(event) {
+    if (event.shiftKey && event.key === 't' || event.key === 'T') {
+        // Ask the player how much score they want
+        const amount = prompt("How much score do you want?");
+        if (amount !== null) {
+            // Convert the input to a number
+            const scoreToAdd = parseInt(amount);
+            if (!isNaN(scoreToAdd) && scoreToAdd > 0) {
+                // Add the specified amount of score
+                score += scoreToAdd;
+                updateScore(); // Update the displayed score
+                alert("You've received " + scoreToAdd + " score!");
+            } else {
+                alert("Invalid input. Please enter a valid number of score.");
+            }
+        }
+    }
+});
+
+        // Event listener for Escape key press to redirect to index.html
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") {
+                window.location.href = "load-2.html";
+            }
+        });
+
+        // Function to save game data to local storage
+        function saveGameToFile() {
+            const gameData = {
+                score: score,
+                gems: gems
+                // Add more game data as needed
+            };
+            localStorage.setItem('gameData', JSON.stringify(gameData));
+            console.log('Game data saved successfully');
+        }
+
+        // Function to load game data from local storage
+function loadGameFromFile() {
+    const gameData = JSON.parse(localStorage.getItem('gameData'));
+    if (gameData) {
+        score = gameData.score;
+        gems = gameData.gems;
+        scoreValueElement.textContent = score;
+        gemCountElement.textContent = gems;
+        console.log('Game data loaded successfully');
+    } else {
+        console.log('No saved game data found');
+    }
+}
+
+        // Event listener for 'S' key press to save game data
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "s" || event.key === "S") {
+                saveGameToFile();
+            }
+        });
+
+        // Event listener for 'L' key press to load game data
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "l" || event.key === "L") {
+                loadGameFromFile();
+            }
+        });
+
+        // Load game data when the page loads
+        window.addEventListener('load', loadGameFromFile);
+    </script>
+</body>
+</html>

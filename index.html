@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Clicker Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            position: relative;
+            background-image: url('background_image.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+        #home-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="home-container">
+        <h1></h1>
+        <a href="Load.html" class="btn">Start New Game</a>
+        <button class="btn" id="info-btn">Info</button>
+        <button class="btn" id="exit-btn">Exit</button>
+    </div>
+
+    <!-- Add the Reset Game button -->
+    <button id="reset-game-button" class="btn">Reset Game</button>
+
+    <script>
+        // Exit button click event
+        document.getElementById('exit-btn').addEventListener('click', function() {
+            // Close the current tab
+            window.close();
+        });
+
+        // Info button click event
+        document.getElementById('info-btn').addEventListener('click', function() {
+            // Show info about the game (you can replace this with your actual info)
+            alert("Space Clicker Game\nVersion 1.0.1 alpha\nDeveloped by Vivan\ns to save\nauto loads");
+        });
+
+        // Reset Game button click event
+        document.getElementById('reset-game-button').addEventListener('click', function() {
+            // Remove all saved game data
+            localStorage.removeItem('gameData');
+            // Optionally, redirect to the index page
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
